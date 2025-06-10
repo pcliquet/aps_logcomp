@@ -1,4 +1,4 @@
-Music Com_Variaveis 128{
+Music Nome_da_Musica 128{
     Varials{
         do_maior = [60, 64, 67]
         fa_maior = [65, 69, 72]
@@ -11,7 +11,7 @@ Music Com_Variaveis 128{
         sol = 79
         la_sus = 81
     }
-    Instrument accordion 3{
+    Instrument nome_do_instrumento 3{
         Loop riff 8{
             Chord do_maior 6
             Chord fa_maior 2
