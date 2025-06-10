@@ -113,16 +113,6 @@ Music MinhaMusica 120 {
 }
 ```
 
----
-
-## 📂 Estrutura do Projeto
-
-- `parser/`: contém o analisador da linguagem
-- `examples/`: exemplos de composições
-- `README.md`: este arquivo de documentação
-
----
-
 ## 🧠 Licença e Créditos
 
 Criado por Pedro Cliquet do Amaral. Sinta-se livre para usar, modificar e compartilhar.
