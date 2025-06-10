@@ -9,7 +9,7 @@ Este projeto define uma linguagem simples para compor música estruturada em tex
 
 ## 🧠 Licença e Créditos
 
-Criado por [Seu Nome]. Sinta-se livre para usar, modificar e compartilhar.
+Criado por Pedro Cliquet do Amaral. Sinta-se livre para usar, modificar e compartilhar.
 
 
 ---
