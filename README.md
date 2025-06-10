@@ -133,7 +133,7 @@ Instrument piano 1 {
 ```
 
 - `Instrument`: palavra-chave do bloco.
-- `piano`: nome do instrumento.
+- `piano`: nome do instrumento. Para saber o nome do insrumento acesse [Instrumentos](https://github.com/pcliquet/aps_logcomp/blob/main/arquivo_com_nome_dos_instrumentos.txt). O compilador não trata os nomes compostos dos instrumentos, funciona apenas para nomes como viola.
 - `1`: canal MIDI no qual o instrumento será executado.
 
 ---
@@ -208,6 +208,8 @@ Acesse os codigos de exemplo no link abaixo:
 Para testar o codigo gerado pelo compilador utilize o site e arraste o arquivo .mid para ouvir:
 [Pianotify](https://pianotify.com/import-midi-file)
 
-
-
+Para executar:
+```
+python3 main.py teste.music
+```
 
