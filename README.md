@@ -1,62 +1,30 @@
 # aps_logcomp
 ## Aluno: Pedro Cliquet do Amaral
 
+program         = "Music", identifier, integer, "{", varials_block, instrument_block*, "}" ;
 
-(* Programa *)
-programa = { declaracao | comando } ;
+varials_block   = "Varials", "{", varial_decl*, "}" ;
+varial_decl     = identifier, "=", (note_list | integer) ;
+note_list       = "[", integer, {",", integer}, "]" ;
 
-(* Declarações *)
-declaracao = "var" identificador ":" tipo "=" expressao ";" ;
+instrument_block = "Instrument", identifier, integer, "{", loop_block+, "}" ;
+loop_block       = "Loop", identifier, integer, "{", music_command+, "}" ;
 
-tipo = "int" | "float" | "nota" | "instrumento" ;
+music_command    = chord_command | play_command ;
+chord_command    = "Chord", identifier, integer ;
+play_command     = "play", identifier, integer ;
 
-(* Comandos *)
-comando = tocar_nota
-         | tocar_acorde
-         | mudar_instrumento
-         | if_statement
-         | while_loop
-         | atribuir_variavel
-         | exportar_midi ;
+identifier       = letter, {letter | digit | "_"} ;
+integer          = digit, {digit} ;
 
-tocar_nota = "play" expressao "dur" expressao ";" ;
-tocar_acorde = "chord" "[" lista_de_notas "]" "dur" expressao ";" ;
-mudar_instrumento = "instrument" expressao ";" ;
-exportar_midi = "export" string_lit ";" ;
+letter           = "A".."Z" | "a".."z" ;
+digit            = "0".."9" ;
 
-if_statement = "if" "(" expressao ")" "{" { comando } "}" [ "else" "{" { comando } "}" ] ;
 
-while_loop = "while" "(" expressao ")" "{" { comando } "}" ;
+Acesse os codigos de exemplo no link abaixo:
 
-atribuir_variavel = identificador "=" expressao ";" ;
+[Acesse a pasta de código](https://github.com/pcliquet/aps_logcomp/tree/main/arquivos_testes)
 
-(* Expressões *)
-expressao = termo { operador termo } ;
 
-termo = numero
-      | identificador
-      | nota_lit
-      | string_lit ;
-
-operador = "+" | "-" | "*" | "/" | "==" | "!=" | "<" | ">" | "<=" | ">=" ;
-
-(* Listas *)
-lista_de_notas = nota_lit { "," nota_lit } ;
-
-(* Literais *)
-nota_lit = "C" | "D" | "E" | "F" | "G" | "A" | "B"
-         | "C#" | "D#" | "F#" | "G#" | "A#"
-         | "Db" | "Eb" | "Gb" | "Ab" | "Bb" ;
-
-string_lit = '"' { caractere } '"' ;
-
-numero = [ "-" ] ( digit { digit } ) [ "." digit { digit } ] ;
-
-digit = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
-
-identificador = letra { letra | digit | "_" } ;
-
-letra = "a" | "b" | ... | "z" | "A" | "B" | ... | "Z" ;
-
-caractere = ? qualquer caractere válido exceto " ? ;
-
+Para testar o codigo gerado pelo compilador utilize o site:
+[Pianotify](https://pianotify.com/import-midi-file)
