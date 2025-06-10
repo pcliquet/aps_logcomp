@@ -1,0 +1,44 @@
+Music semVariaveis 128{
+    Instrument guitar 2{
+        Loop riff 2{
+            Chord [63, 67, 72] 1
+            play 63 1
+            Chord [63, 67, 72] 1
+            play 63 1
+        }
+        Loop riff 2{
+            Chord [60, 63, 68] 1
+            play 63 1
+            Chord [60, 63, 68] 1
+            play 63 1
+        }
+        Loop riff 2{
+            Chord [59, 62, 66] 1
+            play 62 1
+            Chord [59, 62, 66] 1
+            play 62 1
+        }
+        Loop riff 1{
+            Chord [60, 63, 68] 1
+            play 63 1
+            Chord [60, 63, 68] 1
+            play 63 1
+        }
+    }
+        Instrument piano 1{
+        Loop riff 2{
+            Chord [53, 57, 52] 1
+            play 63 1
+            Chord [53, 57, 52] 1
+            play 63 1
+        }
+        Loop riff 2{
+            Chord [60, 63, 68] 1
+            play 63 1
+            Chord [60, 63, 68] 1
+            play 63 1
+        }
+    }
+}
+
+

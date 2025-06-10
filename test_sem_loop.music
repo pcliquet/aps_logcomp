@@ -1,0 +1,10 @@
+Music Yop 128{
+    Varials{
+        count = 60
+    } 
+    Instrument viola 3{
+        play count 1
+    }
+}
+
+

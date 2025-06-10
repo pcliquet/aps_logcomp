@@ -1,0 +1,41 @@
+Music Com_Variaveis 128{
+    Varials{
+        do_maior = [60, 64, 67]
+        fa_maior = [65, 69, 72]
+        sol_maior = [67, 71, 74]
+        do = 72
+        re = 74
+        mi_sus = 75
+        fa = 77
+        fa_sus = 78
+        sol = 79
+        la_sus = 81
+    }
+    Instrument accordion 3{
+        Loop riff 8{
+            Chord do_maior 6
+            Chord fa_maior 2
+            Chord do_maior 2
+            Chord sol_maior 1
+            Chord fa_maior 1
+        }       
+    }
+    Instrument viola 1{
+        Loop riff 2{
+            play do 1
+            play mi_sus 1
+            play fa 1
+            play fa_sus 1
+            play sol 1
+        } 
+        Loop riff 2{
+            play fa 1
+            play la_sus 1
+            play sol 1
+            play fa_sus 1
+            play fa 1
+        } 
+    }
+}
+
+
