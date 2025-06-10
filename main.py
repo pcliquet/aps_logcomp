@@ -193,7 +193,7 @@ def criar_midi_com_duracoes(musica, bpm, nome, instrumentos, instrument_map):
 
     # Instrumentos
     for nome_instr, dados in musica["instrumentos"].items():
-        print(nome_instr)
+        #print(nome_instr)
         canal = dados["canal"]
         program = buscar_programa(nome_instr, instrument_map)
         track.append(Message('program_change', program=program, channel=canal, time=0))
@@ -293,15 +293,15 @@ class VarialsNode(Node):
             valor = self.value.value  # um número só
 
         context["varials"][nome] = valor
-        print("VarialsNode")
-        print(context)
+        #print("VarialsNode")
+        #print(context)
 
 class VarialsBlockNode:
     def __init__(self, varials):
         self.varials = varials
 
     def evaluate(self, context):
-        print(f'contexto no vblock{context}')
+        #print(f'contexto no vblock{context}')
         for varial in self.varials:
             varial.evaluate(context)
 
@@ -406,7 +406,7 @@ class ChordNode(Node):
         # Transforma tudo em lista, mesmo que venha só uma string ou token
         notas = self.notas if isinstance(self.notas, list) else [self.notas]
 
-        print(f'qq e isso: {self.notas}')
+        #print(f'qq e isso: {self.notas}')
 
         for n in notas:
             # Caso seja um nó que implementa evaluate()
@@ -441,7 +441,7 @@ class ChordNode(Node):
             else:
                 notas_com_duracao.append(val)
 
-        print(notas_com_duracao)
+        #print(notas_com_duracao)
 
         for nome, info in context["instrumentos"].items():
             if info["canal"] == self.canal:
@@ -628,7 +628,7 @@ class Parser:
         self.parse_program()
 
     def parse_program(self):
-        print("novo bloco MUSIC \n################################################ ")
+        #print("novo bloco MUSIC \n################################################ ")
         
         self.eat("MUSIC")
         nome = self.current_token().value
@@ -672,7 +672,7 @@ class Parser:
     
 
     def parse_varials_block(self):
-        print("novo bloco VARIALS \n################################################ ")
+        #print("novo bloco VARIALS \n################################################ ")
         self.eat("VARIALS")
         self.eat("LBRACE")
         
@@ -700,7 +700,7 @@ class Parser:
                 self.eat("COMMA")
                 numbers.append(self.eat("NUMBER"))
             self.eat("RBRACK")
-            print(f"{var_name} = {numbers}")
+            #print(f"{var_name} = {numbers}")
             value = numbers
         else:
             raise Exception("Valor inválido em assignment")
@@ -743,7 +743,7 @@ class Parser:
         self.eat("PLAY")
         nota = self.parse_expression()
         duracao = self.parse_expression()
-        print(f'esse é o canal: {self.instrumento_atual.canal}')
+        #print(f'esse é o canal: {self.instrumento_atual.canal}')
         node = PlayNode(nota, duracao, self.instrumento_atual.canal)
         self.instrumento_atual.add_event("note", node)
 
@@ -776,10 +776,10 @@ class Parser:
         var = self.eat("ID")
         self.eat("PLUS_ASSIGN")
         value = self.eat("NUMBER")
-        print(f"{var.value} += {value.value}")
+        #print(f"{var.value} += {value.value}")
 
     def parse_loop_block(self):
-        print("novo bloco LOOP \n################################################ ")
+        #print("novo bloco LOOP \n################################################ ")
         self.eat("LOOP")
 
         loop_id = self.eat("ID").value
@@ -841,7 +841,7 @@ class Parser:
 
 
     def parse_if_block(self):
-        print("novo bloco IF \n################################################ ")
+        #print("novo bloco IF \n################################################ ")
         self.eat("IF")
         self.parse_condition()
         self.eat("LBRACE")
@@ -854,7 +854,7 @@ class Parser:
         left = self.eat("ID").value
         op = self.eat(self.current_token().type).value
         right = self.parse_expression()
-        print(f"condição: {left} {op} {right}")
+        #print(f"condição: {left} {op} {right}")
 
     def peek(self):
         return self.tokens[self.pos + 1] if self.pos + 1 < len(self.tokens) else Token("EOF", "")

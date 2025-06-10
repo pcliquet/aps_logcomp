@@ -210,6 +210,6 @@ Para testar o codigo gerado pelo compilador utilize o site e arraste o arquivo .
 
 Para executar:
 ```
-python3 main.py teste.music
+python3 main.py seu_arquivo.music
 ```
 
