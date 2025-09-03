@@ -31,5 +31,5 @@ jobs:
           external_repository: pcliquet/pcliquet.github.io
           publish_branch: main
           # 👇 ALTERE ESTA LINHA PARA APONTAR PARA A PASTA CORRETA
-          publish_dir: ./meu-site-musical/site
+          publish_dir: ./meu-site-musical/
           force_orphan: true
