@@ -1,0 +1,47 @@
+site_name: Linguagem de Descrição Musical
+# Adicione a linha site_url aqui
+site_url: https://pcliquet.github.io/ 
+site_author: Pedro Cliquet do Amaral
+site_description: >-
+  Documentação da linguagem de domínio específico (DSL) para compor
+  música de forma programática e gerar arquivos MIDI.
+
+# Repositório (opcional, mas legal para ter o link no site)
+repo_url: https://github.com/pcliquet/aps_logcomp
+repo_name: pcliquet/aps_logcomp
+
+# Configuração do Tema
+theme:
+  name: material
+  language: pt  # Define o idioma para português
+  palette:
+    # Esquema de cores claro
+    - scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Mudar para modo escuro
+    # Esquema de cores escuro
+    - scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Mudar para modo claro
+  features:
+    - navigation.tabs
+    - content.code.annotate
+    - content.code.copy
+
+# Estrutura de Navegação (Menu do site)
+nav:
+  - 'Início': 'index.md'
+  - 'EBNF' : 'ebnf.md'
+  - 'Tutorial': # Este é o título do menu suspenso
+    - 'Primeiros Passos': 'tutorial/primeiros-passos.md'
+    - 'Sintaxe da Linguagem': 'tutorial/sintaxe.md'
+  - 'Sobre': 'sobre.md'
+
+# Extensões do Markdown para mais funcionalidades
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences
+  - admonition
