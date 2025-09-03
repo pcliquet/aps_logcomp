@@ -2,7 +2,7 @@ name: Publicar site no GitHub Pages
 on:
   push:
     branches:
-      - main  # Ou a branch principal do seu repo fonte
+      - main # Ou a branch principal do seu repo fonte
 
 jobs:
   deploy:
@@ -21,17 +21,15 @@ jobs:
 
       - name: Construir o site
         run: mkdocs build
+        # 👇 ADICIONE ESTA LINHA PARA ENTRAR NA PASTA PRIMEIRO
+        working-directory: meu-site-musical
 
       - name: Publicar no pcliquet.github.io
         uses: peaceiris/actions-gh-pages@v4
         with:
-          # A chave privada que você adicionou como secret
           deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
-          # O nome do repositório de destino
           external_repository: pcliquet/pcliquet.github.io
-          # A branch de destino
           publish_branch: main
-          # A pasta que contém o site construído
-          publish_dir: ./site
-          # Garante que o histórico do repo de destino fique limpo
+          # 👇 ALTERE ESTA LINHA PARA APONTAR PARA A PASTA CORRETA
+          publish_dir: ./meu-site-musical/site
           force_orphan: true
