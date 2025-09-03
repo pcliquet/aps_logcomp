@@ -1,0 +1,37 @@
+name: Publicar site no GitHub Pages
+on:
+  push:
+    branches:
+      - main  # Ou a branch principal do seu repo fonte
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do código-fonte
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.x
+
+      - name: Instalar dependências
+        run: pip install mkdocs-material
+
+      - name: Construir o site
+        run: mkdocs build
+
+      - name: Publicar no pcliquet.github.io
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          # A chave privada que você adicionou como secret
+          deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
+          # O nome do repositório de destino
+          external_repository: pcliquet/pcliquet.github.io
+          # A branch de destino
+          publish_branch: main
+          # A pasta que contém o site construído
+          publish_dir: ./site
+          # Garante que o histórico do repo de destino fique limpo
+          force_orphan: true
