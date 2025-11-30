@@ -6,18 +6,19 @@ mid = MidiFile()
 track = MidiTrack()
 mid.tracks.append(track)
 
-    
-def set_bpm( bpm, time=0):
+
+def set_bpm(bpm, time=0):
     """
     track = MidiTrack()
     set_bpm(track, bpm=100)
 
     """
     return int(60_000_000 / bpm)
-    #track.append(MetaMessage('set_tempo', tempo=tempo, time=time))
+    # track.append(MetaMessage('set_tempo', tempo=tempo, time=time))
 
-###########################################################################################################################
-#Busca instrumento
+
+##############################################################
+# Busca instrumento
 instrument_map = {
     "acoustic grand piano": 0,
     "bright acoustic piano": 1,
@@ -149,6 +150,7 @@ instrument_map = {
     "gunshot": 127
 }
 
+
 def buscar_programa(nome, instrument_map):
     nome_normalizado = nome.strip().lower()
     if nome_normalizado in instrument_map:
@@ -156,21 +158,21 @@ def buscar_programa(nome, instrument_map):
     raise ValueError(f"Nome do Instrumento '{nome}' nao encontrado.")
 
 
-###########################################################################################################################
+##############################################################
 # PrePro (futuramente: remove comentários, normaliza espaços, etc.)
 # Por enquanto, mantemos em branco
 
 
-
-#########################################################################################################################
+##############################################################
 
 class Node:
     def __init__(self, value, children):
         self.value = value
         self.children = children
-    
+
     def evaluate(self, st):
         return None
+
 
 def beat_to_tick(beat, ticks_per_beat=480):
     return int(beat * ticks_per_beat)
@@ -183,20 +185,33 @@ def criar_midi_com_duracoes(musica, bpm, nome, instrumentos, instrument_map):
 
     tempo = int(60_000_000 / bpm)
     track.append(MetaMessage('set_tempo', tempo=tempo, time=0))
-    track.append(MetaMessage('time_signature', numerator=4, denominator=4, time=0))
+    track.append(MetaMessage(
+        'time_signature',
+        numerator=4,
+        denominator=4,
+        time=0
+        )
+    )
 
     # Lista com todos os eventos (tempo absoluto)
     eventos = []
 
-    #program = buscar_programa(instrumentos[], instrument_map)
-    #print(program)
+    # program = buscar_programa(instrumentos[], instrument_map)
+    # print(program)
 
     # Instrumentos
     for nome_instr, dados in musica["instrumentos"].items():
-        #print(nome_instr)
+        # print(nome_instr)
         canal = dados["canal"]
         program = buscar_programa(nome_instr, instrument_map)
-        track.append(Message('program_change', program=program, channel=canal, time=0))
+        track.append(
+            Message(
+                'program_change',
+                program=program,
+                channel=canal,
+                time=0
+            )
+        )
 
         tempo_atual = 0  # tempo em beats
 
@@ -210,8 +225,28 @@ def criar_midi_com_duracoes(musica, bpm, nome, instrumentos, instrument_map):
                     tick_on = beat_to_tick(tempo_atual)
                     tick_off = beat_to_tick(tempo_atual + duracao)
 
-                    eventos.append({"tick": tick_on, "msg": Message('note_on' , note=nota, velocity=64, channel=canal)})
-                    eventos.append({"tick": tick_off, "msg": Message('note_off', note=nota, velocity=64, channel=canal)})
+                    eventos.append(
+                        {
+                            "tick": tick_on,
+                            "msg": Message(
+                                'note_on',
+                                note=nota,
+                                velocity=64,
+                                channel=canal
+                            )
+                        }
+                    )
+                    eventos.append(
+                        {
+                            "tick": tick_off,
+                            "msg": Message(
+                                'note_off',
+                                note=nota,
+                                velocity=64,
+                                channel=canal
+                            )
+                        }
+                    )
                     tempo_atual += duracao
 
             elif "chord" in bloco:
@@ -223,10 +258,29 @@ def criar_midi_com_duracoes(musica, bpm, nome, instrumentos, instrument_map):
                     tick_on = beat_to_tick(tempo_atual)
                     tick_off = beat_to_tick(tempo_atual + duracao)
                     for nota in notas:
-                        eventos.append({"tick": tick_on, "msg": Message('note_on', note=nota, velocity=64, channel=canal)})
-                        eventos.append({"tick": tick_off, "msg": Message('note_off', note=nota, velocity=64, channel=canal)})
+                        eventos.append(
+                            {
+                                "tick": tick_on,
+                                "msg": Message(
+                                    'note_on',
+                                    note=nota,
+                                    velocity=64,
+                                    channel=canal
+                                )
+                            }
+                        )
+                        eventos.append(
+                            {
+                                "tick": tick_off,
+                                "msg": Message(
+                                    'note_off',
+                                    note=nota,
+                                    velocity=64,
+                                    channel=canal
+                                )
+                            }
+                        )
                     tempo_atual += duracao
-
 
     # Ordenar eventos por tick
     eventos.sort(key=lambda e: e["tick"])
@@ -243,11 +297,18 @@ def criar_midi_com_duracoes(musica, bpm, nome, instrumentos, instrument_map):
     print(f"Arquivo '{nome}.mid' criado com sucesso.")
 
 
-
-
-
 class MusicNode(Node):
-    def __init__(self, nome, bpm, varials, instrumentos, loops, ifs, chords, plays):
+    def __init__(
+        self,
+        nome,
+        bpm,
+        varials,
+        instrumentos,
+        loops,
+        ifs,
+        chords,
+        plays
+    ):
         self.nome = nome
         self.bpm = bpm
         self.varials = varials
@@ -259,12 +320,12 @@ class MusicNode(Node):
 
     def evaluate(self, context=None):
         print(f"⏺ Criando música: {self.nome} | BPM: {self.bpm}")
-        
+
         if context is None:
             context = {}
         if "instrumentos" not in context:
             context["instrumentos"] = {}
-        
+
         # Criar dicionário varials no contexto, se ainda não existir
         if "varials" not in context:
             context["varials"] = {}
@@ -276,7 +337,6 @@ class MusicNode(Node):
         # Avalia instrumentos com acesso às variáveis
         for instrumento in self.instrumentos:
             instrumento.evaluate(context)
-
 
 
 class VarialsNode(Node):
@@ -293,15 +353,16 @@ class VarialsNode(Node):
             valor = self.value.value  # um número só
 
         context["varials"][nome] = valor
-        #print("VarialsNode")
-        #print(context)
+        # print("VarialsNode")
+        # print(context)
+
 
 class VarialsBlockNode:
     def __init__(self, varials):
         self.varials = varials
 
     def evaluate(self, context):
-        #print(f'contexto no vblock{context}')
+        # print(f'contexto no vblock{context}')
         for varial in self.varials:
             varial.evaluate(context)
 
@@ -322,11 +383,10 @@ class InstrumentNode(Node):
             self._current_block = {tipo: []}
         self._current_block[tipo].append(node)
 
-
     def finalize(self):
         if self._current_block:
             self.partitura.append(self._current_block)
-            #print(f'TEMOS UM JOGO: {self.partitura}')
+            # print(f'TEMOS UM JOGO: {self.partitura}')
             self._current_block = None
             self._current_block_type = None
 
@@ -342,8 +402,8 @@ class InstrumentNode(Node):
                 for node in eventos:
                     node.evaluate(context)
 
-        print(f"[InstrumentNode.evaluate] Instrumento '{self.nome}' avaliado e salvo no contexto")
-
+        print("""[InstrumentNode.evaluate] Instrumento '{self.nome}'
+            avaliado e salvo no contexto""")
 
 
 class PlayNode(Node):
@@ -374,7 +434,8 @@ class PlayNode(Node):
             nota_val = self.nota
 
         else:
-            raise Exception(f"Tipo inesperado em nota: {self.nota} ({type(self.nota)})")
+            raise Exception(f"""Tipo inesperado em nota: {self.nota}
+                ({type(self.nota)})""")
 
         # Se for lista (ex: acorde), pega a primeira nota
         if isinstance(nota_val, list):
@@ -383,15 +444,22 @@ class PlayNode(Node):
             nota_final = nota_val
 
         # Resolve duração
-        duracao_final = self.duracao.evaluate(context) if hasattr(self.duracao, "evaluate") else self.duracao
+        duracao_final = (
+            self.duracao.evaluate(context)
+            if hasattr(self.duracao, "evaluate")
+            else self.duracao
+        )
 
         # Adiciona à partitura
         for nome, info in context["instrumentos"].items():
             if info["canal"] == self.canal:
-                info["partitura"].append({"note": (int(nota_final), duracao_final)})
+                info["partitura"].append(
+                    {"note": (int(nota_final), duracao_final)}
+                )
                 break
         else:
             raise Exception(f"Nenhum instrumento com canal {self.canal}")
+
 
 class ChordNode(Node):
     def __init__(self, notas, duracao, canal):
@@ -400,13 +468,17 @@ class ChordNode(Node):
         self.canal = canal
 
     def evaluate(self, context):
-        duracao_val = self.duracao.evaluate(context) if hasattr(self.duracao, "evaluate") else self.duracao
+        duracao_val = (
+            self.duracao.evaluate(context)
+            if hasattr(self.duracao, "evaluate")
+            else self.duracao
+        )
         notas_com_duracao = []
 
         # Transforma tudo em lista, mesmo que venha só uma string ou token
         notas = self.notas if isinstance(self.notas, list) else [self.notas]
 
-        #print(f'qq e isso: {self.notas}')
+        # print(f'qq e isso: {self.notas}')
 
         for n in notas:
             # Caso seja um nó que implementa evaluate()
@@ -441,16 +513,16 @@ class ChordNode(Node):
             else:
                 notas_com_duracao.append(val)
 
-        #print(notas_com_duracao)
+        # print(notas_com_duracao)
 
         for nome, info in context["instrumentos"].items():
             if info["canal"] == self.canal:
-                info["partitura"].append({"chord": (notas_com_duracao, duracao_val)})
+                info["partitura"].append(
+                    {"chord": (notas_com_duracao, duracao_val)}
+                )
                 break
         else:
             raise Exception(f"Nenhum instrumento com canal {self.canal}")
-            
-
 
 
 class LoopNode(Node):
@@ -464,8 +536,7 @@ class LoopNode(Node):
                 node.evaluate(context)
 
 
-
-#########################################################################################################################
+##############################################################
 # Token
 
 class Token:
@@ -477,7 +548,7 @@ class Token:
         return f"Token({self.type}, {self.value})"
 
 
-#########################################################################################################################
+##############################################################
 # Tokenizer
 class Tokenizer:
     def __init__(self, text):
@@ -564,7 +635,10 @@ class Tokenizer:
                 tokens.append(Token("PAREN", char))
             elif char.isalpha():
                 ident = char
-                while (peek := self.peek_char()) and (peek.isalnum() or peek == "_"):
+                while (
+                    (peek := self.peek_char()) and
+                    (peek.isalnum() or peek == "_")
+                ):
                     ident += self.get_next_char()
                 token_type = keywords.get(ident, "ID")
                 tokens.append(Token(token_type, ident))
@@ -574,7 +648,7 @@ class Tokenizer:
         return tokens
 
 
-#########################################################################################################################
+##############################################################
 # Parser
 class Parser:
     def __init__(self, tokenizer):
@@ -594,11 +668,15 @@ class Parser:
         if token.type == expected_type:
             self.pos += 1
             return token
-        raise Exception(f"Esperado {expected_type}, mas encontrou {token.type}")
-    
+        raise Exception(f"""Esperado {expected_type},
+            mas encontrou {token.type}""")
+
     def parse_expression(self):
         expr = self.parse_term()
-        while self.current_token() and self.current_token().type in ("PLUS", "MINUS"):
+        while (
+            self.current_token()
+            and self.current_token().type in ("PLUS", "MINUS")
+        ):
             op = self.eat(self.current_token().type)
             right = self.parse_term()
             expr = f"{expr} {op.value} {right}"
@@ -606,7 +684,10 @@ class Parser:
 
     def parse_term(self):
         term = self.parse_factor()
-        while self.current_token() and self.current_token().type in ("MULT", "DIV"):
+        while (
+            self.current_token()
+            and self.current_token().type in ("MULT", "DIV")
+        ):
             op = self.eat(self.current_token().type)
             right = self.parse_factor()
             term = f"{term} {op.value} {right}"
@@ -628,8 +709,6 @@ class Parser:
         self.parse_program()
 
     def parse_program(self):
-        #print("novo bloco MUSIC \n################################################ ")
-        
         self.eat("MUSIC")
         nome = self.current_token().value
         self.eat("ID")
@@ -652,8 +731,10 @@ class Parser:
             if token_type == "VARIALS":
                 varials = self.parse_varials_block()
             elif token_type == "INSTRUMENT":
-                instrumento = self.parse_instrument_block()  # captura o InstrumentNode criado
-                instrumentos.append(instrumento)             # adiciona na lista
+                # captura o InstrumentNode criado
+                instrumento = self.parse_instrument_block()
+                # adiciona na lista
+                instrumentos.append(instrumento)
             elif token_type == "LOOP":
                 loops.append(self.parse_loop_block())
             elif token_type == "IF":
@@ -667,32 +748,38 @@ class Parser:
 
         self.eat("RBRACE")
 
-        return MusicNode(nome, bpm, varials, instrumentos, loops, ifs, chords, plays)
-
-    
+        return MusicNode(
+            nome,
+            bpm,
+            varials,
+            instrumentos,
+            loops,
+            ifs,
+            chords,
+            plays
+        )
 
     def parse_varials_block(self):
-        #print("novo bloco VARIALS \n################################################ ")
         self.eat("VARIALS")
         self.eat("LBRACE")
-        
+
         varials = []
         while self.current_token() and self.current_token().type == "ID":
             varial_node = self.parse_assignment()
-            #print(f"valor no block: {varial_node.value}")
-            #print(f"nome no block: {varial_node.name}")
+            # print(f"valor no block: {varial_node.value}")
+            # print(f"nome no block: {varial_node.name}")
             varials.append(varial_node)
-        
+
         self.eat("RBRACE")
-        return VarialsBlockNode(varials) 
+        return VarialsBlockNode(varials)
 
     def parse_assignment(self):
         var_name = self.eat("ID")  # supondo que eat retorna o valor do token
         self.eat("ASSIGN")
-        
+
         if self.current_token().type == "NUMBER":
             value = self.eat("NUMBER")
-            #print(f"{var_name} = {value}")
+            # print(f"{var_name} = {value}")
         elif self.current_token().type == "LBRACK":
             self.eat("LBRACK")
             numbers = [self.eat("NUMBER")]
@@ -700,21 +787,20 @@ class Parser:
                 self.eat("COMMA")
                 numbers.append(self.eat("NUMBER"))
             self.eat("RBRACK")
-            #print(f"{var_name} = {numbers}")
+            # print(f"{var_name} = {numbers}")
             value = numbers
         else:
             raise Exception("Valor inválido em assignment")
 
         return VarialsNode(var_name, value)
 
-
-
     def parse_instrument_block(self):
         self.eat("INSTRUMENT")
         instrument_name = self.eat("ID").value
         canal = int(self.eat("NUMBER").value)
-        
-        self.instrumento_atual = InstrumentNode(instrument_name, canal)  # salva instrumento ativo
+
+        # salva instrumento ativos
+        self.instrumento_atual = InstrumentNode(instrument_name, canal)
 
         self.eat("LBRACE")
         while self.current_token() and self.current_token().type != "RBRACE":
@@ -737,13 +823,12 @@ class Parser:
         self.instrumento_atual.finalize()
         self.count += 1
         return self.instrumento_atual
-    
 
     def parse_play_stmt(self):
         self.eat("PLAY")
         nota = self.parse_expression()
         duracao = self.parse_expression()
-        #print(f'esse é o canal: {self.instrumento_atual.canal}')
+        # print(f'esse é o canal: {self.instrumento_atual.canal}')
         node = PlayNode(nota, duracao, self.instrumento_atual.canal)
         self.instrumento_atual.add_event("note", node)
 
@@ -762,27 +847,26 @@ class Parser:
                     self.eat("RBRACK")
                     break
                 else:
-                    raise Exception("Esperado vírgula ou colchete de fechamento")
+                    raise Exception("""Esperado vírgula
+                        ou colchete de fechamento""")
         else:
             notas = self.eat("ID").value  # apenas o nome da variável
 
         duracao = self.parse_expression()
-        #print(f'parse chord: {notas}')
+        # print(f'parse chord: {notas}')
         node = ChordNode(notas, duracao, canal=self.instrumento_atual.canal)
         self.instrumento_atual.add_event("chord", node)
 
-
     def parse_inc_stmt(self):
-        var = self.eat("ID")
+        self.eat("ID")
         self.eat("PLUS_ASSIGN")
-        value = self.eat("NUMBER")
-        #print(f"{var.value} += {value.value}")
+        self.eat("NUMBER")
+        # print(f"{var.value} += {value.value}")
 
     def parse_loop_block(self):
-        #print("novo bloco LOOP \n################################################ ")
         self.eat("LOOP")
 
-        loop_id = self.eat("ID").value
+        self.eat("ID").value
         repeat_count = int(self.eat("NUMBER").value)  # número de repetições
 
         self.eat("LBRACE")
@@ -792,7 +876,8 @@ class Parser:
         while self.current_token() and self.current_token().type != "RBRACE":
             token = self.current_token()
             if token.type == "IF":
-                loop_instructions.append(('if', self.current_token()))  # opcional, depende do seu uso
+                # opcional, depende do seu uso
+                loop_instructions.append(('if', self.current_token()))
                 self.parse_if_block()
             elif token.type == "PLAY":
                 self.eat("PLAY")
@@ -813,13 +898,14 @@ class Parser:
                             self.eat("RBRACK")
                             break
                         else:
-                            raise Exception("Esperado vírgula ou colchete de fechamento")
+                            raise Exception("""Esperado vírgula ou
+                                colchete de fechamento""")
                 else:
                     notas = self.parse_expression()  # <-- ID passado direto!
 
                 duracao = self.parse_expression()
                 loop_instructions.append(('chord', notas, duracao))
-                
+
         self.eat("RBRACE")
 
         # Agora executar o loop N vezes
@@ -827,21 +913,29 @@ class Parser:
             for instr in loop_instructions:
                 tipo, *args = instr
                 if tipo == 'play':
-                    note, duracao = args    
-                    #print(f"loop block play {note}")
-                    #print(f'esse é o canal LOOP play: {self.instrumento_atual.canal}')
-                    node = PlayNode(note, duracao, self.instrumento_atual.canal)
+                    note, duracao = args
+                    # print(f"loop block play {note}")
+                    # print(f'esse é o canal LOOP play:
+                    # {self.instrumento_atual.canal}')
+                    node = PlayNode(
+                        note,
+                        duracao,
+                        self.instrumento_atual.canal
+                    )
                     self.instrumento_atual.add_event("note", node)
                 elif tipo == 'chord':
                     notas, duracao = args
-                    #print(f"loop block chord{notas}")
-                    #print(f'esse é o canal LOOP chord: {self.instrumento_atual.canal}')
-                    node = ChordNode(notas, duracao, canal=self.instrumento_atual.canal)
+                    # print(f"loop block chord{notas}")
+                    # print(f'esse é o canal LOOP chord:
+                    # {self.instrumento_atual.canal}')
+                    node = ChordNode(
+                        notas,
+                        duracao,
+                        canal=self.instrumento_atual.canal
+                    )
                     self.instrumento_atual.add_event("chord", node)
 
-
     def parse_if_block(self):
-        #print("novo bloco IF \n################################################ ")
         self.eat("IF")
         self.parse_condition()
         self.eat("LBRACE")
@@ -851,19 +945,19 @@ class Parser:
         self.eat("RBRACE")
 
     def parse_condition(self):
-        left = self.eat("ID").value
-        op = self.eat(self.current_token().type).value
-        right = self.parse_expression()
-        #print(f"condição: {left} {op} {right}")
+        self.eat("ID").value
+        self.eat(self.current_token().type).value
+        self.parse_expression()
+        # print(f"condição: {left} {op} {right}")
 
     def peek(self):
-        return self.tokens[self.pos + 1] if self.pos + 1 < len(self.tokens) else Token("EOF", "")
+        return (
+            self.tokens[self.pos + 1] if self.pos + 1 < len(self.tokens)
+            else Token("EOF", "")
+        )
 
 
-
-
-
-#########################################################################################################################
+##############################################################
 # Main
 
 def main():
@@ -892,9 +986,16 @@ def main():
     context = {}  # contexto inicial vazio
 
     music_node.evaluate(context)  # chama Evaluate para gerar o .mid
-    #build_midi_sequencial(context, bpm=music_node.bpm)
+    # build_midi_sequencial(context, bpm=music_node.bpm)
     print(context)
-    criar_midi_com_duracoes(context, music_node.bpm, music_node.nome, music_node.instrumentos, instrument_map)
+    criar_midi_com_duracoes(
+        context,
+        music_node.bpm,
+        music_node.nome,
+        music_node.instrumentos,
+        instrument_map
+    )
+
 
 if __name__ == "__main__":
     main()
